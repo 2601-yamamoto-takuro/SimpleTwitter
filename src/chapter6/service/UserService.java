@@ -40,12 +40,9 @@ public class UserService {
 
         Connection connection = null;
         try {
-        	if (StringUtils.isBlank(user.getPassword())) {
-	            // パスワード暗号化
-	            String encPassword = CipherUtil.encrypt(user.getPassword());
-	            user.setPassword(encPassword);
-        	}
-
+            // パスワード暗号化
+            String encPassword = CipherUtil.encrypt(user.getPassword());
+            user.setPassword(encPassword);
             connection = getConnection();
             new UserDao().insert(connection, user);
             commit(connection);
@@ -123,10 +120,11 @@ public class UserService {
 
         Connection connection = null;
         try {
-            // パスワード暗号化
-            String encPassword = CipherUtil.encrypt(user.getPassword());
-            user.setPassword(encPassword);
-
+        	if (StringUtils.isBlank(user.getPassword())) {
+	            // パスワード暗号化
+	            String encPassword = CipherUtil.encrypt(user.getPassword());
+	            user.setPassword(encPassword);
+        	}
             connection = getConnection();
             new UserDao().update(connection, user);
             commit(connection);
