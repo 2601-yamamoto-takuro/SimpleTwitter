@@ -10,12 +10,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 
 import chapter6.beans.Message;
-import chapter6.beans.User;
 import chapter6.logging.InitApplication;
 import chapter6.service.MessageService;
 
@@ -46,10 +44,6 @@ public class EditServlet extends HttpServlet {
 	  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
         " : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
-        HttpSession session = request.getSession();
-
-        User user = (User) session.getAttribute("loginUser");
-
         String messageIdParam = request.getParameter("messageid");
         // 編集時のパラメータが半角数値かどうか
         if (messageIdParam != null && !isHalfWidthNumber(messageIdParam)) {
@@ -60,10 +54,10 @@ public class EditServlet extends HttpServlet {
             return;
         }
 
-        int userId = user.getId();
-        int messageId = Integer.parseInt(messageIdParam);
+        Message messageId = new Message();
+        messageId.setId(Integer.parseInt(messageIdParam));
 
-        Message message = new MessageService().getEdit(messageId, userId);
+        Message message = new MessageService().select(messageId);
 
         if (message == null) {
         	List<String> errorMessages = new ArrayList<String>();
@@ -84,19 +78,16 @@ public class EditServlet extends HttpServlet {
 	  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
         " : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
-        HttpSession session = request.getSession();
-
         List<String> errorMessages = new ArrayList<String>();
-        User user = (User) session.getAttribute("loginUser");
 
-        int messageId = Integer.parseInt(request.getParameter("messageid"));
-        int userId = user.getId();
+        Message messageInfo = new Message();
+        messageInfo.setId(Integer.parseInt(request.getParameter("messageid")));
+        messageInfo.setText(request.getParameter("text"));
 
-        String text = request.getParameter("text");
-        if (!isValid(text, errorMessages)) {
+        if (!isValid(messageInfo.getText(), errorMessages)) {
         	Message message = new Message();
-            message.setId(messageId);
-            message.setText(text);
+            message.setId(messageInfo.getId());
+            message.setText(messageInfo.getText());
 
             request.setAttribute("message", message);
             request.setAttribute("errorMessages", errorMessages);
@@ -104,7 +95,7 @@ public class EditServlet extends HttpServlet {
             return;
         }
 
-        new MessageService().postEdit(messageId, userId, text);
+        new MessageService().update(messageInfo);
         response.sendRedirect("./");
     }
 

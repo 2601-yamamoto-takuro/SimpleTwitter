@@ -112,7 +112,7 @@ public class MessageService {
           }
       }
 
-    public Message getEdit(int messageId, int userId) {
+    public Message select(Message messageId) {
 
     	  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
             " : " + new Object(){}.getClass().getEnclosingMethod().getName());
@@ -120,7 +120,7 @@ public class MessageService {
             Connection connection = null;
             try {
                 connection = getConnection();
-                Message messages = new MessageDao().getEdit(connection, messageId, userId);
+                Message messages = new MessageDao().select(connection, messageId);
                 commit(connection);
 
                 return messages;
@@ -137,7 +137,7 @@ public class MessageService {
             }
         }
 
-    public void postEdit(int messageId, int userId, String text) {
+    public void update(Message messageInfo) {
 
   	  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
           " : " + new Object(){}.getClass().getEnclosingMethod().getName());
@@ -145,7 +145,7 @@ public class MessageService {
           Connection connection = null;
           try {
               connection = getConnection();
-              new MessageDao().postEdit(connection, messageId, userId, text);
+              new MessageDao().update(connection, messageInfo);
               commit(connection);
           } catch (RuntimeException e) {
               rollback(connection);

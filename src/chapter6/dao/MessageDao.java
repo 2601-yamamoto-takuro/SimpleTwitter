@@ -90,32 +90,20 @@ public class MessageDao {
           }
       }
 
-    public Message getEdit(Connection connection, int messageId, int userId) {
+    public Message select(Connection connection, Message messageId) {
 
     	PreparedStatement ps = null;
         try {
-            String sql = "SELECT * FROM messages WHERE id = ? AND user_id = ?";
+            String sql = "SELECT * FROM messages WHERE id = ?";
 
             ps = connection.prepareStatement(sql);
-            ps.setInt(1, messageId);
-            ps.setInt(2, userId);
+            ps.setInt(1, messageId.getId());
 
             ResultSet rs = ps.executeQuery();
 
-            try {
-            	if (rs.next()) {
-            		Message message = new Message();
-                    message.setId(rs.getInt("id"));
-                    message.setUserId(rs.getInt("user_id"));
-                    message.setText(rs.getString("text"));
-                    return message;
-                } else {
-                    return null;
-                }
-            } finally {
-                close(rs);
-            }
+            Message message = toMessage(rs);
 
+            return message;
         } catch (SQLException e) {
             throw new SQLRuntimeException(e);
         } finally {
@@ -123,24 +111,42 @@ public class MessageDao {
         }
     }
 
-    public void postEdit(Connection connection, int messageId, int userId, String text) {
+    private Message toMessage(ResultSet rs) throws SQLException {
+
+	  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
+        " : " + new Object(){}.getClass().getEnclosingMethod().getName());
+
+	  Message message = null;
+	  try {
+	      if (rs.next()) {
+	          message = new Message();
+	          message.setId(rs.getInt("id"));
+	          message.setText(rs.getString("text"));
+	          message.setUserId(rs.getInt("user_id"));
+	          message.setCreatedDate(rs.getTimestamp("created_date"));
+	      }
+	      return message;
+	  } finally {
+	      close(rs);
+	  }
+    }
+
+    public void update(Connection connection, Message messageInfo) {
 
     	PreparedStatement ps = null;
         try {
-            String sql = "UPDATE messages SET text = ? WHERE id = ? AND user_id = ?";
+        	String sql = "UPDATE messages SET text = ?, updated_date = CURRENT_TIMESTAMP WHERE id = ?";
 
             ps = connection.prepareStatement(sql);
-            ps.setString(1, text);
-            ps.setInt(2, messageId);
-            ps.setInt(3, userId);
+            ps.setString(1, messageInfo.getText());
+            ps.setInt(2, messageInfo.getId());
 
             ps.executeUpdate();
-
         } catch (SQLException e) {
 		log.log(Level.SEVERE, new Object(){}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
             throw new SQLRuntimeException(e);
         } finally {
             close(ps);
-        } close(ps);
+        }
     }
 }
