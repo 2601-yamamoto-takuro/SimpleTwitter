@@ -124,3 +124,7 @@ label {
 	margin-left: 10px;
 	color: red;
 }
+
+.text {
+  white-space: pre-wrap;
+}

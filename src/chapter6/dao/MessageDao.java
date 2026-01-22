@@ -4,6 +4,7 @@ import static chapter6.utils.CloseableUtil.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -62,5 +63,84 @@ public class MessageDao {
         } finally {
             close(ps);
         }
+    }
+
+    public void delete(Connection connection, int messageId, int userId) {
+
+  	  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
+          " : " + new Object(){}.getClass().getEnclosingMethod().getName());
+
+          PreparedStatement ps = null;
+          try {
+              StringBuilder sql = new StringBuilder();
+              sql.append("DELETE FROM messages ");
+              sql.append("WHERE id = ? AND user_id = ?");
+
+              ps = connection.prepareStatement(sql.toString());
+
+              ps.setInt(1, messageId);
+              ps.setInt(2, userId);
+
+              ps.executeUpdate();
+          } catch (SQLException e) {
+  		log.log(Level.SEVERE, new Object(){}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+              throw new SQLRuntimeException(e);
+          } finally {
+              close(ps);
+          }
+      }
+
+    public Message getEdit(Connection connection, int messageId, int userId) {
+
+    	PreparedStatement ps = null;
+        try {
+            String sql = "SELECT * FROM messages WHERE id = ? AND user_id = ?";
+
+            ps = connection.prepareStatement(sql);
+            ps.setInt(1, messageId);
+            ps.setInt(2, userId);
+
+            ResultSet rs = ps.executeQuery();
+
+            try {
+            	if (rs.next()) {
+            		Message message = new Message();
+                    message.setId(rs.getInt("id"));
+                    message.setUserId(rs.getInt("user_id"));
+                    message.setText(rs.getString("text"));
+                    return message;
+                } else {
+                    return null;
+                }
+            } finally {
+                close(rs);
+            }
+
+        } catch (SQLException e) {
+            throw new SQLRuntimeException(e);
+        } finally {
+            close(ps);
+        }
+    }
+
+    public void postEdit(Connection connection, int messageId, int userId, String text) {
+
+    	PreparedStatement ps = null;
+        try {
+            String sql = "UPDATE messages SET text = ? WHERE id = ? AND user_id = ?";
+
+            ps = connection.prepareStatement(sql);
+            ps.setString(1, text);
+            ps.setInt(2, messageId);
+            ps.setInt(3, userId);
+
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+		log.log(Level.SEVERE, new Object(){}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+            throw new SQLRuntimeException(e);
+        } finally {
+            close(ps);
+        } close(ps);
     }
 }

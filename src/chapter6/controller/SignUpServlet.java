@@ -87,7 +87,6 @@ public class SignUpServlet extends HttpServlet {
 	  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
         " : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
-	    int id = user.getId();
         String name = user.getName();
         String account = user.getAccount();
         String password = user.getPassword();

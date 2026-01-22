@@ -88,4 +88,75 @@ public class MessageService {
               close(connection);
           }
      }
+
+    public void delete(int messageId, int userId) {
+
+  	  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
+          " : " + new Object(){}.getClass().getEnclosingMethod().getName());
+
+          Connection connection = null;
+          try {
+              connection = getConnection();
+              new MessageDao().delete(connection, messageId, userId);
+              commit(connection);
+          } catch (RuntimeException e) {
+              rollback(connection);
+  		log.log(Level.SEVERE, new Object(){}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+              throw e;
+          } catch (Error e) {
+              rollback(connection);
+  		log.log(Level.SEVERE, new Object(){}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+              throw e;
+          } finally {
+              close(connection);
+          }
+      }
+
+    public Message getEdit(int messageId, int userId) {
+
+    	  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
+            " : " + new Object(){}.getClass().getEnclosingMethod().getName());
+
+            Connection connection = null;
+            try {
+                connection = getConnection();
+                Message messages = new MessageDao().getEdit(connection, messageId, userId);
+                commit(connection);
+
+                return messages;
+            } catch (RuntimeException e) {
+                rollback(connection);
+    		log.log(Level.SEVERE, new Object(){}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+                throw e;
+            } catch (Error e) {
+                rollback(connection);
+    		log.log(Level.SEVERE, new Object(){}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+                throw e;
+            } finally {
+                close(connection);
+            }
+        }
+
+    public void postEdit(int messageId, int userId, String text) {
+
+  	  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
+          " : " + new Object(){}.getClass().getEnclosingMethod().getName());
+
+          Connection connection = null;
+          try {
+              connection = getConnection();
+              new MessageDao().postEdit(connection, messageId, userId, text);
+              commit(connection);
+          } catch (RuntimeException e) {
+              rollback(connection);
+  		log.log(Level.SEVERE, new Object(){}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+              throw e;
+          } catch (Error e) {
+              rollback(connection);
+  		log.log(Level.SEVERE, new Object(){}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+              throw e;
+          } finally {
+              close(connection);
+          }
+      }
 }
