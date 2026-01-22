@@ -33,7 +33,7 @@
 
 		    <div class="form-area">
 			    <form action="edit" method="post">
-				    <input type="hidden" name="messageid" value="${message.id}">
+				    <input type="hidden" name="messageId" value="${message.id}">
 				    <textarea name="text">${message.text}</textarea>
 				    <br />
 				    <button type="submit">更新</button>

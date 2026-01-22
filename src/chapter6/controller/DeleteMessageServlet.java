@@ -53,7 +53,7 @@ public class DeleteMessageServlet extends HttpServlet {
             return;
         }
 
-        int messageId = Integer.parseInt(request.getParameter("messageid"));
+        int messageId = Integer.parseInt(request.getParameter("messageId"));
         int userId = user.getId();
 
         new MessageService().delete(messageId, userId);

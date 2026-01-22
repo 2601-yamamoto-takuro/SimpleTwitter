@@ -44,7 +44,7 @@ public class EditServlet extends HttpServlet {
 	  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
         " : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
-        String messageIdParam = request.getParameter("messageid");
+        String messageIdParam = request.getParameter("messageId");
         // 編集時のパラメータが半角数値かどうか
         if (messageIdParam != null && !isHalfWidthNumber(messageIdParam)) {
         	List<String> errorMessages = new ArrayList<String>();
@@ -81,7 +81,7 @@ public class EditServlet extends HttpServlet {
         List<String> errorMessages = new ArrayList<String>();
 
         Message messageInfo = new Message();
-        messageInfo.setId(Integer.parseInt(request.getParameter("messageid")));
+        messageInfo.setId(Integer.parseInt(request.getParameter("messageId")));
         messageInfo.setText(request.getParameter("text"));
 
         if (!isValid(messageInfo.getText(), errorMessages)) {
