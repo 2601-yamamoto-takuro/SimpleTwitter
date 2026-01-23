@@ -128,3 +128,7 @@ label {
 .text {
   white-space: pre-wrap;
 }
+
+.comment-area {
+	margin-bottom: 10px;
+}

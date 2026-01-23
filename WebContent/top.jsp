@@ -24,6 +24,14 @@
 			    </c:if>
 			</div>
 
+			<div class = "date-area">
+				<form method="get">
+		            開始日:<input type="date" name="startDate" value ="${startDate}">
+		            終了日:<input type="date" name="endDate" value ="${endDate}">
+		            <button type="submit">絞込</button>
+		        </form>
+			</div>
+
 			<c:if test="${ not empty loginUser }">
 			    <div class="profile">
 			        <div class="name"><h2><c:out value="${loginUser.name}" /></h2></div>
@@ -56,6 +64,26 @@
 
 			<div class="messages">
 			    <c:forEach items="${messages}" var="message">
+			    	<c:forEach items="${comments}" var="comment">
+				    	<c:if test="${comment.messageId == message.id}">
+				    		<div class="account-name">
+				                <span class="account">
+								    <a href="./?user_id=<c:out value="${comment.userId}"/> ">
+								        <c:out value="${comment.account}" />
+								    </a>
+								</span>
+				                <span class="name"><c:out value="${comment.name}" /></span>
+				            </div>
+			            </c:if>
+		                <c:if test="${comment.messageId == message.id}">
+		                    <div class="comment-area">
+		                        <div class="text"><c:out value="${comment.text}" /></div>
+		                        <div class="date">
+		                            <fmt:formatDate value="${comment.createdDate}" pattern="yyyy/MM/dd HH:mm:ss" />
+		                        </div>
+		                    </div>
+		                </c:if>
+		            </c:forEach>
 			        <div class="message">
 			            <div class="account-name">
 			                <span class="account">
@@ -71,12 +99,22 @@
 			        <div class="edit-area">
 				        <c:if test="${ not empty loginUser and loginUser.id == message.userId }">
 					        <form action="edit" method="get">
-					            <input type="hidden" name ="messageId" value="${message.id}">
+					            <input type="hidden" name="messageId" value="${message.id}">
 					            <button type="submit">編集</button>
 					        </form>
 					        <form action="deleteMessage" method="post">
-					            <input type="hidden" name ="messageId" value="${message.id}">
+					            <input type="hidden" name="messageId" value="${message.id}">
 					            <button type="submit">削除</button>
+					        </form>
+				        </c:if>
+					</div>
+					<div class="comment-area">
+				        <c:if test="${ not empty loginUser}">
+					        <form action="comment" method="post">
+						        <textarea name="text" cols="100" rows="5" class="tweet-box"></textarea>
+				            	<br />
+					            <input type="hidden" name="messageId" value="${message.id}">
+					            <button type="submit">返信</button>
 					        </form>
 				        </c:if>
 					</div>

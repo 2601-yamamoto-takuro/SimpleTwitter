@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -32,7 +33,7 @@ public class UserMessageDao {
 
     }
 
-    public List<UserMessage> select(Connection connection, Integer id, int num) {
+    public List<UserMessage> select(Connection connection, Integer id, String startDate, String endDate, int num) {
 
 	  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
         " : " + new Object(){}.getClass().getEnclosingMethod().getName());
@@ -52,15 +53,26 @@ public class UserMessageDao {
             sql.append("ON messages.user_id = users.id ");
 
             if (id != null) {
-            	sql.append("WHERE users.id = ? ");
+            	sql.append("WHERE users.id = ?");
+            }
+
+            if (startDate != null && endDate != null) {
+        	    sql.append(" AND messages.created_date BETWEEN ? AND ?");
             }
 
             sql.append("ORDER BY created_date DESC limit " + num);
 
             ps = connection.prepareStatement(sql.toString());
 
+            int index = 1;
             if (id != null) {
-                ps.setInt(1, id);
+                ps.setInt(index++, id);
+            }
+            if (startDate != null) {
+                ps.setTimestamp(index++, Timestamp.valueOf(startDate));
+            }
+            if (endDate != null) {
+                ps.setTimestamp(index++, Timestamp.valueOf(endDate));
             }
 
             ResultSet rs = ps.executeQuery();
