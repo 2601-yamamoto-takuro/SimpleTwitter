@@ -52,23 +52,18 @@ public class CommentServlet extends HttpServlet {
 
         String messageIdParam = request.getParameter("messageId");
 
-        Comment commentInfo = new Comment();
-        commentInfo.setText(request.getParameter("text"));
-        commentInfo.setUserId(user.getId());
-        commentInfo.setMessageId(Integer.parseInt(messageIdParam));
+        Comment comment = new Comment();
+        comment.setText(request.getParameter("text"));
+        comment.setUserId(user.getId());
+        comment.setMessageId(Integer.parseInt(messageIdParam));
 
-        if (!isValid(commentInfo.getText(), errorMessages)) {
-        	Comment comment = new Comment();
-            comment.setId(commentInfo.getId());
-            comment.setText(commentInfo.getText());
-
-            session.setAttribute("comment", comment);
+        if (!isValid(comment.getText(), errorMessages)) {
             session.setAttribute("errorMessages", errorMessages);
             response.sendRedirect("./");
             return;
         }
 
-        new CommentService().insert(commentInfo);
+        new CommentService().insert(comment);
         response.sendRedirect("./");
     }
 

@@ -51,29 +51,22 @@ public class UserMessageDao {
             sql.append("FROM messages ");
             sql.append("INNER JOIN users ");
             sql.append("ON messages.user_id = users.id ");
+            sql.append("WHERE messages.created_date BETWEEN ? AND ?");
 
             if (id != null) {
-            	sql.append("WHERE users.id = ?");
+            	sql.append(" AND users.id = ?");
             }
 
-            if (startDate != null && endDate != null) {
-        	    sql.append(" AND messages.created_date BETWEEN ? AND ?");
-            }
-
-            sql.append("ORDER BY created_date DESC limit " + num);
+            sql.append(" ORDER BY created_date DESC limit " + num);
 
             ps = connection.prepareStatement(sql.toString());
 
-            int index = 1;
+            ps.setTimestamp(1, Timestamp.valueOf(startDate));
+            ps.setTimestamp(2, Timestamp.valueOf(endDate));
             if (id != null) {
-                ps.setInt(index++, id);
+            	ps.setInt(3, id);
             }
-            if (startDate != null) {
-                ps.setTimestamp(index++, Timestamp.valueOf(startDate));
-            }
-            if (endDate != null) {
-                ps.setTimestamp(index++, Timestamp.valueOf(endDate));
-            }
+
 
             ResultSet rs = ps.executeQuery();
 

@@ -74,8 +74,6 @@
 								</span>
 				                <span class="name"><c:out value="${comment.name}" /></span>
 				            </div>
-			            </c:if>
-		                <c:if test="${comment.messageId == message.id}">
 		                    <div class="comment-area">
 		                        <div class="text"><c:out value="${comment.text}" /></div>
 		                        <div class="date">
